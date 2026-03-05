@@ -1,0 +1,12 @@
+export { handleUserMessage } from './chatEngine';
+export { regenerateLastResponse, editAndResubmit, deleteMessage, bookmarkMessage, reactToMessage } from './messageManager';
+export { insertCodeAtCursor, applyCodeToFile, newFileWithCode } from './codeBlockActions';
+export { expandFileReferences } from './fileReferenceExpander';
+export { getWorkspaceTree, buildWorkspaceTreeAsync } from './workspaceTree';
+export { sessionToMarkdown, exportCurrentChat, exportAsJson, sendSessionStats } from './exportManager';
+export { estimateTokens, trimMessagesToTokenLimit } from './contextTrimmer';
+export { generateFollowUps } from './followUps';
+export { confirmTool } from './toolConfirmation';
+export { handleSlashCommand } from './slashCommands';
+export { handleRapidCode } from './rapidCodeHandler';
+export { sendRecentFiles, insertRecentFile } from './recentFiles';

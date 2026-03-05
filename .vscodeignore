@@ -1,0 +1,16 @@
+.vscode/**
+src/**
+!src/webview/**
+node_modules/**
+.gitignore
+tsconfig.json
+tsconfig.tsbuildinfo
+api.txt
+esbuild.js
+test-validate.js
+vitest.config.ts
+**/*.ts
+**/*.test.ts
+!src/webview/*.js
+!src/webview/*.css
+!out/**

@@ -1,0 +1,669 @@
+{
+  "name": "mercury-chat",
+  "displayName": "+Lars - AI Chat Tool (Mercury 2)",
+  "description": "Full-featured AI coding assistant powered by Inception Mercury 2 — standalone sidebar with tools, sessions, streaming + Copilot Chat (@mercury). 10 built-in tools, agentic Rapid Code pipeline, token budget guardrails, live cost tracking.",
+  "version": "0.23.0",
+  "publisher": "lars-bjerga",
+  "license": "MIT",
+  "icon": "public/pluslarslogo2025white.png",
+  "galleryBanner": {
+    "color": "#1a1a2e",
+    "theme": "dark"
+  },
+  "keywords": [
+    "ai",
+    "chat",
+    "mercury",
+    "coding assistant",
+    "copilot",
+    "code generation",
+    "agentic",
+    "rapid code",
+    "inception",
+    "llm"
+  ],
+  "engines": {
+    "vscode": "^1.93.0"
+  },
+  "categories": [
+    "AI",
+    "Chat",
+    "Programming Languages",
+    "Machine Learning"
+  ],
+  "activationEvents": [],
+  "main": "./out/extension.js",
+  "contributes": {
+    "languageModelTools": [
+      {
+        "name": "mercury_rapid_code",
+        "tags": [
+          "agent",
+          "coding"
+        ],
+        "toolReferenceName": "rapidCode",
+        "displayName": "Mercury Rapid Code",
+        "icon": "$(rocket)",
+        "userDescription": "Mercury Rapid Code — autonomous agent that plans, codes, validates, tests, and audits your task",
+        "modelDescription": "Autonomous coding agent powered by Mercury 2. Give it a task and it will plan, write code, validate, run tests, audit, and self-heal. Returns structured result with files changed, validation, test results, and gap analysis. Modes: quick, validate, test, full.",
+        "canBeReferencedInPrompt": true,
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "task": {
+              "type": "string",
+              "description": "The coding task to complete"
+            },
+            "mode": {
+              "type": "string",
+              "enum": [
+                "quick",
+                "validate",
+                "test",
+                "full"
+              ],
+              "description": "Execution mode. Default: full"
+            },
+            "files": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Optional file paths to read as context"
+            },
+            "context": {
+              "type": "string",
+              "description": "Optional additional context or constraints"
+            }
+          },
+          "required": [
+            "task"
+          ]
+        }
+      }
+    ],
+    "chatParticipants": [
+      {
+        "id": "mercury-chat.mercury",
+        "fullName": "Mercury 2",
+        "name": "mercury",
+        "description": "Chat with Inception Mercury 2 for coding assistance — no Copilot credits used",
+        "isSticky": true,
+        "commands": [
+          {
+            "name": "explain",
+            "description": "Explain the selected code or concept"
+          },
+          {
+            "name": "fix",
+            "description": "Fix issues in the selected code"
+          },
+          {
+            "name": "review",
+            "description": "Review code for bugs, performance, and best practices"
+          },
+          {
+            "name": "test",
+            "description": "Generate unit tests for the selected code"
+          },
+          {
+            "name": "doc",
+            "description": "Generate documentation for the selected code"
+          },
+          {
+            "name": "refactor",
+            "description": "Refactor and improve the selected code"
+          },
+          {
+            "name": "optimize",
+            "description": "Optimize code for performance"
+          },
+          {
+            "name": "new",
+            "description": "Scaffold new files, components, or projects"
+          },
+          {
+            "name": "rapid",
+            "description": "Rapid Code — autonomous agent that plans, codes, validates, and audits"
+          },
+          {
+            "name": "search",
+            "description": "Search the codebase for code, files, symbols, or patterns"
+          },
+          {
+            "name": "commit",
+            "description": "Generate a conventional commit message from current changes"
+          },
+          {
+            "name": "terminal",
+            "description": "Help with terminal commands and shell scripting"
+          },
+          {
+            "name": "outline",
+            "description": "Analyze file or project structure and architecture"
+          },
+          {
+            "name": "pr",
+            "description": "Help create or review a pull request"
+          }
+        ]
+      }
+    ],
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "mercury-chat",
+          "title": "+Lars AI Chat",
+          "icon": "media/mercury-icon.svg"
+        }
+      ]
+    },
+    "views": {
+      "mercury-chat": [
+        {
+          "type": "webview",
+          "id": "mercuryChat.chatView",
+          "name": "Chat"
+        }
+      ]
+    },
+    "configuration": {
+      "title": "Mercury Chat",
+      "properties": {
+        "mercuryChat.apiKey": {
+          "type": "string",
+          "default": "",
+          "description": "Your Inception Mercury 2 API key",
+          "order": 1
+        },
+        "mercuryChat.apiBaseUrl": {
+          "type": "string",
+          "default": "https://api.inceptionlabs.ai/v1",
+          "description": "Base URL for the Mercury 2 API",
+          "order": 2
+        },
+        "mercuryChat.model": {
+          "type": "string",
+          "default": "mercury-2",
+          "description": "Default model for the Mercury provider (e.g. mercury-2). Other providers use their own model settings.",
+          "order": 3
+        },
+        "mercuryChat.temperature": {
+          "type": "number",
+          "default": 0.6,
+          "minimum": 0.5,
+          "maximum": 1,
+          "description": "Temperature for response generation (Mercury 2 supports 0.5–1.0)",
+          "order": 4
+        },
+        "mercuryChat.reasoningEffort": {
+          "type": "string",
+          "default": "medium",
+          "enum": [
+            "instant",
+            "low",
+            "medium",
+            "high"
+          ],
+          "enumDescriptions": [
+            "Instant — near-zero latency, ideal for real-time",
+            "Low — fast with light reasoning",
+            "Medium — balanced speed and quality (default)",
+            "High — maximum reasoning quality"
+          ],
+          "description": "Controls the amount of reasoning Mercury 2 performs",
+          "order": 4.1
+        },
+        "mercuryChat.autoReasoningEffort": {
+          "type": "boolean",
+          "default": true,
+          "description": "Automatically adjust reasoning effort based on request complexity (overrides manual setting per request)",
+          "order": 4.2
+        },
+        "mercuryChat.maxTokens": {
+          "type": "number",
+          "default": 32768,
+          "minimum": 256,
+          "maximum": 50000,
+          "description": "Maximum tokens in the response (API supports up to 50,000)",
+          "order": 5
+        },
+        "mercuryChat.systemPrompt": {
+          "type": "string",
+          "default": "You are Mercury 2, an expert coding assistant by Inception. Provide clear, accurate, and well-structured code with explanations. Follow best practices and modern conventions.",
+          "description": "System prompt sent with every request",
+          "editPresentation": "multilineText",
+          "order": 6
+        },
+        "mercuryChat.enableTools": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable tool use (read/write/edit files, run commands) in the sidebar chat",
+          "order": 7
+        },
+        "mercuryChat.useEditModelForEdits": {
+          "type": "boolean",
+          "default": true,
+          "description": "When true, the `edit_file` tool will call the Mercury Edit model to generate edits instead of performing a simple local string replace.",
+          "order": 7.1
+        },
+        "mercuryChat.editModel": {
+          "type": "string",
+          "default": "mercury-edit",
+          "description": "Model to use for edit operations when `useEditModelForEdits` is enabled.",
+          "order": 7.2
+        },
+        "mercuryChat.confirmDestructiveTools": {
+          "type": "boolean",
+          "default": true,
+          "description": "Ask for confirmation before executing write_file, edit_file, or run_command",
+          "order": 8
+        },
+        "mercuryChat.maxContextTokens": {
+          "type": "number",
+          "default": 16000,
+          "minimum": 2000,
+          "maximum": 128000,
+          "description": "Maximum estimated tokens to send in conversation context (older messages are trimmed)",
+          "order": 9
+        },
+        "mercuryChat.autoInjectWorkspace": {
+          "type": "boolean",
+          "default": true,
+          "description": "Automatically include a workspace file tree summary in the system prompt",
+          "order": 10
+        },
+        "mercuryChat.accentColor": {
+          "type": "string",
+          "default": "#7c6bf5",
+          "description": "Custom accent color for the chat UI (hex)",
+          "order": 11
+        },
+        "mercuryChat.compactMode": {
+          "type": "boolean",
+          "default": false,
+          "description": "Use compact (dense) spacing in the chat UI",
+          "order": 12
+        },
+        "mercuryChat.autoContext": {
+          "type": "boolean",
+          "default": true,
+          "description": "Automatically include active editor file, selection, and diagnostics as context in @mercury chat",
+          "order": 13
+        },
+        "mercuryChat.followUpSuggestions": {
+          "type": "boolean",
+          "default": true,
+          "description": "Show suggested follow-up prompts after each response",
+          "order": 14
+        },
+        "mercuryChat.autoRetry": {
+          "type": "boolean",
+          "default": true,
+          "description": "Automatically retry on transient API errors (429, 5xx) with exponential backoff",
+          "order": 15
+        },
+        "mercuryChat.streamTimeout": {
+          "type": "number",
+          "default": 60,
+          "minimum": 10,
+          "maximum": 300,
+          "description": "Seconds to wait for streaming data before considering the connection stalled",
+          "order": 16
+        },
+        "mercuryChat.rapidCodeBuildCommand": {
+          "type": "string",
+          "default": "npm run build",
+          "description": "Build command used by Rapid Code to validate changes (e.g., 'npm run build', 'tsc', 'cargo build')",
+          "order": 17
+        },
+        "mercuryChat.rapidCodeTestCommand": {
+          "type": "string",
+          "default": "npm test",
+          "description": "Test command used by Rapid Code to run the test suite (e.g., 'npm test', 'pytest', 'cargo test')",
+          "order": 18
+        },
+        "mercuryChat.enableCodeLens": {
+          "type": "boolean",
+          "default": true,
+          "description": "Show Explain/Test/Fix Code Lens above functions and classes",
+          "order": 19
+        },
+        "mercuryChat.maxAgentRounds": {
+          "type": "number",
+          "default": 15,
+          "minimum": 1,
+          "maximum": 50,
+          "description": "Maximum number of agentic tool-call rounds per chat request",
+          "order": 20
+        },
+        "mercuryChat.enableGitContext": {
+          "type": "boolean",
+          "default": true,
+          "description": "Include git status and diff information as context",
+          "order": 21
+        },
+        "mercuryChat.maxSessionCostUsd": {
+          "type": "number",
+          "default": 1,
+          "minimum": 0,
+          "description": "Maximum session cost in USD before warning. Set 0 to disable budget guardrail.",
+          "order": 22
+        },
+        "mercuryChat.performanceMode": {
+          "type": "boolean",
+          "default": false,
+          "description": "Enable a performance-focused profile (lighter context and delayed spinners) for better responsiveness on large workspaces.",
+          "order": 23
+        },
+        "mercuryChat.maxSessionMessages": {
+          "type": "number",
+          "default": 500,
+          "minimum": 50,
+          "maximum": 5000,
+          "description": "Maximum number of chat messages kept in memory per session before older messages are pruned.",
+          "order": 24
+        },
+        "mercuryChat.spinnerDelayMs": {
+          "type": "number",
+          "default": 200,
+          "minimum": 0,
+          "maximum": 2000,
+          "description": "Delay before showing streaming/loading spinners to reduce UI flicker on fast responses.",
+          "order": 25
+        },
+        "mercuryChat.routeOrder": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "default": [
+            "copilot",
+            "openrouter",
+            "ollama",
+            "mercury"
+          ],
+          "description": "Provider fallback chain. The router tries providers in this order; on failure it falls through to the next. Valid values: copilot, openrouter, ollama, mercury.",
+          "order": 26
+        },
+        "mercuryChat.openRouterApiKey": {
+          "type": "string",
+          "default": "",
+          "description": "API key for OpenRouter (https://openrouter.ai). Leave empty to skip OpenRouter in the routing chain.",
+          "order": 27
+        },
+        "mercuryChat.openRouterModel": {
+          "type": "string",
+          "default": "google/gemini-2.0-flash-001",
+          "description": "Default model to use on OpenRouter (e.g. google/gemini-2.0-flash-001, anthropic/claude-3-haiku).",
+          "order": 28
+        },
+        "mercuryChat.ollamaEndpoint": {
+          "type": "string",
+          "default": "http://localhost:11434/v1",
+          "description": "Base URL for your local Ollama instance (OpenAI-compatible endpoint).",
+          "order": 29
+        },
+        "mercuryChat.ollamaModel": {
+          "type": "string",
+          "default": "llama3.1",
+          "description": "Default model for Ollama (e.g. llama3.1, codellama, mistral).",
+          "order": 30
+        },
+        "mercuryChat.copilotModelFamily": {
+          "type": "string",
+          "default": "gpt-4o",
+          "description": "Preferred Copilot language model family (e.g. gpt-4o, gpt-4o-mini). Uses 0 Copilot credits.",
+          "order": 31
+        },
+        "mercuryChat.openRouterTimeout": {
+          "type": "number",
+          "default": 60000,
+          "minimum": 5000,
+          "maximum": 300000,
+          "description": "Streaming timeout for OpenRouter requests (ms). The stream is aborted if no data is received within this period.",
+          "order": 32
+        },
+        "mercuryChat.ollamaTimeout": {
+          "type": "number",
+          "default": 120000,
+          "minimum": 5000,
+          "maximum": 600000,
+          "description": "Streaming timeout for Ollama requests (ms). Local models may be slow on first load.",
+          "order": 33
+        }
+      }
+    },
+    "commands": [
+      {
+        "command": "mercuryChat.setApiKey",
+        "title": "Mercury Chat: Set API Key"
+      },
+      {
+        "command": "mercuryChat.clearHistory",
+        "title": "Mercury Chat: Clear Conversation History"
+      },
+      {
+        "command": "mercuryChat.newChat",
+        "title": "Mercury Chat: New Chat",
+        "icon": "$(add)"
+      },
+      {
+        "command": "mercuryChat.sendSelection",
+        "title": "Mercury Chat: Send Selection to Chat"
+      },
+      {
+        "command": "mercuryChat.exportChat",
+        "title": "Mercury Chat: Export Conversation",
+        "icon": "$(export)"
+      },
+      {
+        "command": "mercuryChat.toggleSidebar",
+        "title": "Mercury Chat: Toggle Sessions Panel"
+      },
+      {
+        "command": "mercuryChat.explainSelection",
+        "title": "Mercury: Explain This"
+      },
+      {
+        "command": "mercuryChat.fixSelection",
+        "title": "Mercury: Fix This"
+      },
+      {
+        "command": "mercuryChat.testSelection",
+        "title": "Mercury: Generate Tests"
+      },
+      {
+        "command": "mercuryChat.docSelection",
+        "title": "Mercury: Generate Docs"
+      },
+      {
+        "command": "mercuryChat.generateCommitMessage",
+        "title": "Mercury Chat: Generate Commit Message"
+      },
+      {
+        "command": "mercuryChat.clearAllSessions",
+        "title": "Mercury Chat: Clear All Sessions"
+      },
+      {
+        "command": "mercuryChat.undoLastMessage",
+        "title": "Mercury Chat: Undo Last Message"
+      },
+      {
+        "command": "mercuryChat.duplicateSession",
+        "title": "Mercury Chat: Duplicate Current Session"
+      },
+      {
+        "command": "mercuryChat.toggleCompact",
+        "title": "Mercury Chat: Toggle Compact Mode"
+      },
+      {
+        "command": "mercuryChat.showShortcuts",
+        "title": "Mercury Chat: Show Keyboard Shortcuts"
+      },
+      {
+        "command": "mercuryChat.searchInChat",
+        "title": "Mercury Chat: Search in Conversation"
+      },
+      {
+        "command": "mercuryChat.inlinePrompt",
+        "title": "Mercury: Inline Prompt at Cursor"
+      },
+      {
+        "command": "mercuryChat.sendTerminalOutput",
+        "title": "Mercury Chat: Send Terminal Output to Chat"
+      },
+      {
+        "command": "mercuryChat.fixDiagnostic",
+        "title": "Mercury: Fix This Problem"
+      },
+      {
+        "command": "mercuryChat.codeLensExplain",
+        "title": "Mercury: Explain Function"
+      },
+      {
+        "command": "mercuryChat.codeLensTest",
+        "title": "Mercury: Generate Tests for Function"
+      },
+      {
+        "command": "mercuryChat.codeLensFix",
+        "title": "Mercury: Fix Function"
+      },
+      {
+        "command": "mercuryChat.showOutputChannel",
+        "title": "Mercury Chat: Show Output Channel"
+      },
+      {
+        "command": "mercuryChat.cycleReasoningEffort",
+        "title": "Mercury Chat: Cycle Reasoning Effort"
+      },
+      {
+        "command": "mercuryChat.showTokenUsage",
+        "title": "Mercury Chat: Show Token Usage & Cost"
+      },
+      {
+        "command": "mercuryChat.resetTokenStats",
+        "title": "Mercury Chat: Reset Token Stats"
+      },
+      {
+        "command": "mercuryChat.showProviderHealth",
+        "title": "Mercury Chat: Show Provider Health"
+      },
+      {
+        "command": "mercuryChat.switchProvider",
+        "title": "Mercury Chat: Switch Provider"
+      },
+      {
+        "command": "mercuryChat.stopGeneration",
+        "title": "Mercury Chat: Stop Generation"
+      },
+      {
+        "command": "mercuryChat.regenerate",
+        "title": "Mercury Chat: Regenerate Last Response"
+      },
+      {
+        "command": "mercuryChat.viewLearnings",
+        "title": "Mercury Chat: View Learnings"
+      },
+      {
+        "command": "mercuryChat.clearLearnings",
+        "title": "Mercury Chat: Clear Learnings"
+      }
+    ],
+    "keybindings": [
+      {
+        "command": "mercuryChat.newChat",
+        "key": "ctrl+l",
+        "mac": "cmd+l",
+        "when": "view.mercuryChat.chatView.visible"
+      },
+      {
+        "command": "mercuryChat.toggleSidebar",
+        "key": "ctrl+shift+m",
+        "mac": "cmd+shift+m",
+        "when": "view.mercuryChat.chatView.visible"
+      },
+      {
+        "command": "mercuryChat.inlinePrompt",
+        "key": "ctrl+i",
+        "mac": "cmd+i",
+        "when": "editorTextFocus"
+      },
+      {
+        "command": "mercuryChat.stopGeneration",
+        "key": "escape",
+        "mac": "escape",
+        "when": "view.mercuryChat.chatView.visible"
+      },
+      {
+        "command": "mercuryChat.regenerate",
+        "key": "ctrl+shift+r",
+        "mac": "cmd+shift+r",
+        "when": "view.mercuryChat.chatView.visible"
+      }
+    ],
+    "menus": {
+      "editor/context": [
+        {
+          "command": "mercuryChat.sendSelection",
+          "when": "editorHasSelection",
+          "group": "mercury@1"
+        },
+        {
+          "command": "mercuryChat.explainSelection",
+          "when": "editorHasSelection",
+          "group": "mercury@2"
+        },
+        {
+          "command": "mercuryChat.fixSelection",
+          "when": "editorHasSelection",
+          "group": "mercury@3"
+        },
+        {
+          "command": "mercuryChat.testSelection",
+          "when": "editorHasSelection",
+          "group": "mercury@4"
+        },
+        {
+          "command": "mercuryChat.docSelection",
+          "when": "editorHasSelection",
+          "group": "mercury@5"
+        }
+      ],
+      "view/title": [
+        {
+          "command": "mercuryChat.newChat",
+          "when": "view == mercuryChat.chatView",
+          "group": "navigation"
+        },
+        {
+          "command": "mercuryChat.exportChat",
+          "when": "view == mercuryChat.chatView",
+          "group": "navigation"
+        }
+      ]
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "lint": "eslint src --ext ts",
+    "bundle": "node esbuild.js",
+    "bundle:watch": "node esbuild.js --watch",
+    "bundle:prod": "node esbuild.js --production",
+    "package": "npm run bundle:prod && vsce package",
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.0",
+    "@types/vscode": "^1.93.0",
+    "@typescript-eslint/eslint-plugin": "^8.56.1",
+    "@typescript-eslint/parser": "^8.56.1",
+    "esbuild": "^0.27.3",
+    "eslint": "^8.57.1",
+    "typescript": "^5.3.0",
+    "vitest": "^4.0.18"
+  }
+}
