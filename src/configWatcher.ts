@@ -5,6 +5,7 @@ import * as vscode from 'vscode';
 import { MercuryClient } from './mercuryClient';
 import { MercuryChatViewProvider } from './chatViewProvider';
 import { ProviderRouter, ProviderId } from './providers';
+import { logger } from './utils/logger';
 
 export function registerConfigWatcher(
     client: MercuryClient,
@@ -62,5 +63,8 @@ export function registerConfigWatcher(
 
         chatProvider.setAccentColor(updated.get<string>('accentColor', '#7c6bf5'));
         chatProvider.setCompactMode(updated.get<boolean>('compactMode', false));
+
+        // Sync logger level
+        logger.syncLevelFromConfig();
     });
 }

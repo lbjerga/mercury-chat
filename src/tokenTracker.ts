@@ -149,6 +149,25 @@ class TokenTracker {
         return this.estimateTokens(responseText.length);
     }
 
+    /**
+     * Batch-estimate tokens for multiple text chunks in one call.
+     * Improvement #14: Avoids sequential per-message overhead and
+     * prepares for future async tokeniser integration.
+     */
+    batchEstimate(texts: string[]): number[] {
+        return texts.map(t => this.estimateTokens(t.length));
+    }
+
+    /**
+     * Sum token estimate for a list of text chunks.
+     * Convenience shorthand for `batchEstimate().reduce()`.
+     */
+    batchEstimateTotal(texts: string[]): number {
+        let total = 0;
+        for (const t of texts) { total += this.estimateTokens(t.length); }
+        return total;
+    }
+
     // ── Recording ──
 
     /** Record a completed request with all available data */

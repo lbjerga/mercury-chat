@@ -8,6 +8,7 @@ import { resetStickyModel } from './promptCache';
 import { registerRapidCodeTool } from './rapidCode';
 import { MercuryCodeLensProvider } from './codeLensProvider';
 import { logInfo } from './outputChannel';
+import { logger } from './utils/logger';
 import { tokenTracker } from './tokenTracker';
 import { ProviderRouter, MercuryProvider, OpenRouterProvider, OllamaProvider, CopilotProvider, ProviderId } from './providers';
 
@@ -37,6 +38,9 @@ let extensionContext: vscode.ExtensionContext | undefined;
  */
 export function activate(context: vscode.ExtensionContext) {
     console.log('[Mercury Chat] Activating...');
+
+    // ─── Initialise structured logger ───
+    logger.syncLevelFromConfig();
 
     // ─── Token usage persistence — restore session data ───
     const savedTokenStats = context.globalState.get<{ requests: any[]; sessionStart: number }>('mercuryTokenStats');

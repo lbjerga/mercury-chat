@@ -7,6 +7,7 @@
 
 import * as vscode from 'vscode';
 import { getCachedDiagnostics } from './contextBuilders';
+import { debounce } from './utils';
 
 export class MercuryCodeLensProvider implements vscode.CodeLensProvider {
     private _onDidChangeCodeLenses = new vscode.EventEmitter<void>();
@@ -14,6 +15,9 @@ export class MercuryCodeLensProvider implements vscode.CodeLensProvider {
 
     // #22 Cache lenses per document version to avoid redundant regex parsing
     private _lensCache = new Map<string, { version: number; lenses: vscode.CodeLens[] }>();
+
+    // #19 Debounce refresh to avoid excessive recomputation on rapid document changes
+    private _debouncedFire = debounce(() => this._onDidChangeCodeLenses.fire(), 300);
 
     provideCodeLenses(
         document: vscode.TextDocument,
@@ -150,6 +154,6 @@ export class MercuryCodeLensProvider implements vscode.CodeLensProvider {
 
     refresh(): void {
         this._lensCache.clear();
-        this._onDidChangeCodeLenses.fire();
+        this._debouncedFire();
     }
 }

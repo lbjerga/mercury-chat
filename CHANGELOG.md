@@ -4,6 +4,51 @@ All notable changes to the **+Lars AI Chat Tool** extension will be documented i
 
 ---
 
+## [0.25.0] — 2026-03-05
+
+### 20 Codebase Improvements Release
+
+Comprehensive quality, maintainability, and developer experience improvements across the entire codebase.
+
+#### New Modules
+- **Structured Logger** (`src/utils/logger.ts`) — Levelled logging (debug/info/warn/error/silent) with configurable `mercuryChat.logLevel` setting. Replaces raw `console.log` calls. Old `outputChannel.ts` now delegates to the new logger.
+- **safeAsync Error Boundaries** (`src/utils/safeAsync.ts`) — `safeAsync()`, `safeRun()`, and `safeCommand()` helpers to wrap async entry points, preventing uncaught rejections from crashing the extension.
+- **Internationalisation** (`src/i18n.ts`) — All user-facing UI strings extracted into a translatable module with English defaults, interpolation support, and `loadLocale()`/`resetLocale()` API.
+- **Base HTTP Provider** (`src/providers/baseHttpProvider.ts`) — Shared OpenAI-compatible HTTP/SSE streaming logic extracted from Ollama and OpenRouter providers, reducing duplication.
+- **Public Types** (`src/types/public.ts`) — Centralised re-exports of all public API types (ChatSession, ToolResult, ProviderId, etc.) for a stable contract surface.
+
+#### Tooling & Quality
+- **ESLint + Prettier** — Added `.prettierrc`, `.prettierignore`, integrated `eslint-config-prettier`. New scripts: `lint:fix`, `format`, `format:check`, `typecheck`, `precommit`.
+- **GitHub Actions CI** (`.github/workflows/ci.yml`) — Automated type-check, lint, and test on every push/PR.
+- **Release Automation** (`.github/workflows/release.yml`) — Auto-build and upload VSIX to GitHub Releases on tag push.
+
+#### Documentation
+- `docs/architecture.md` — High-level component diagram, provider router flow, module table.
+- `docs/contributing.md` — Development workflow, code style guide, commit conventions.
+- `docs/api.md` — Provider interface, Router API, Logger API, safeAsync API, i18n API, tool definitions.
+
+#### Performance
+- **Context Trimmer Caching** — `estimateTokens()` now uses a memoized LRU hash cache (256 entries) to avoid redundant re-estimation on unchanged messages.
+- **CodeLens Debounce** — `refresh()` is debounced by 300ms to prevent excessive recomputation on rapid document changes.
+- **Batch Token Estimation** — New `batchEstimate()`/`batchEstimateTotal()` methods on `tokenTracker` for efficient multi-message estimation.
+
+#### Accessibility
+- **ARIA Labels** — Added `aria-label` attributes to all interactive webview elements: buttons, selects, text inputs, textareas, and the chat message log (`role="log"`, `aria-live="polite"`).
+
+#### UX Improvements
+- **Command Categories** — All 30+ commands now have proper `category` fields ("Mercury Chat" / "Mercury") for cleaner Command Palette grouping.
+- **Log Level Setting** — New `mercuryChat.logLevel` setting (debug/info/warn/error/silent) with live sync on config change.
+
+#### Testing
+- **fileCache.test.ts** (8 tests) — Cache hit/miss, TTL expiry, invalidation, eviction, stats.
+- **i18n.test.ts** (9 tests) — Key lookup, interpolation, locale override/reset, comprehensive key coverage.
+- **Total: 208 tests across 12 test files, all passing.**
+
+#### Deferred
+- **Folder restructure** (item 1) — Moving entry points into `src/extension/` deferred to avoid breaking 57+ import paths in one pass.
+
+---
+
 ## [0.24.0] — 2026-03-05
 
 ### Testing & Reliability Release

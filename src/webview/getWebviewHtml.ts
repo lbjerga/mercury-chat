@@ -39,14 +39,14 @@ export function getWebviewHtml(
     <!-- Top bar -->
     <div id="top-bar">
         <span id="active-title">Mercury Chat</span>
-        <select id="effort-select" title="Reasoning effort">
+        <select id="effort-select" title="Reasoning effort" aria-label="Reasoning effort level">
             <option value="low">Low</option>
             <option value="medium" selected>Medium</option>
             <option value="high">High</option>
         </select>
         <span class="top-bar-group">
             <span class="top-bar-label">Temp</span>
-            <select id="temp-select" title="Temperature (0.5–1.0)">
+            <select id="temp-select" title="Temperature (0.5–1.0)" aria-label="Temperature">
                 <option value="0.5">0.5</option>
                 <option value="0.6" selected>0.6</option>
                 <option value="0.7">0.7</option>
@@ -58,7 +58,7 @@ export function getWebviewHtml(
         </span>
         <span class="top-bar-group">
             <span class="top-bar-label">Tokens</span>
-            <select id="tokens-select" title="Max response tokens">
+            <select id="tokens-select" title="Max response tokens" aria-label="Maximum response tokens">
                 <option value="1024">1K</option>
                 <option value="2048">2K</option>
                 <option value="4096">4K</option>
@@ -68,20 +68,20 @@ export function getWebviewHtml(
                 <option value="50000">50K</option>
             </select>
         </span>
-        <button class="icon-btn" id="stats-btn" title="Session Statistics">&#128202;</button>
-        <button class="icon-btn" id="shortcuts-btn" title="Keyboard Shortcuts">&#63;</button>
-        <button class="icon-btn" id="search-chat-btn" title="Search in Chat (Ctrl+F)">&#128269;</button>
-        <button class="icon-btn" id="sys-prompt-btn" title="System Prompt">&#9881;</button>
-        <button class="icon-btn" id="export-btn" title="Export chat">&#128190;</button>
-        <button class="icon-btn" id="undo-btn" title="Undo last message">&#8617;</button>
-        <button class="icon-btn" id="new-chat-top" title="New Chat">+</button>
+        <button class="icon-btn" id="stats-btn" title="Session Statistics" aria-label="Session Statistics">&#128202;</button>
+        <button class="icon-btn" id="shortcuts-btn" title="Keyboard Shortcuts" aria-label="Keyboard Shortcuts">&#63;</button>
+        <button class="icon-btn" id="search-chat-btn" title="Search in Chat (Ctrl+F)" aria-label="Search in Chat">&#128269;</button>
+        <button class="icon-btn" id="sys-prompt-btn" title="System Prompt" aria-label="System Prompt">&#9881;</button>
+        <button class="icon-btn" id="export-btn" title="Export chat" aria-label="Export chat">&#128190;</button>
+        <button class="icon-btn" id="undo-btn" title="Undo last message" aria-label="Undo last message">&#8617;</button>
+        <button class="icon-btn" id="new-chat-top" title="New Chat" aria-label="New Chat">+</button>
     </div>
 
     <!-- Search in chat bar -->
     <div id="chat-search-bar">
-        <input id="chat-search-input" type="text" placeholder="Search in conversation..." />
+        <input id="chat-search-input" type="text" placeholder="Search in conversation..." aria-label="Search in conversation" />
         <span id="chat-search-count"></span>
-        <button class="icon-btn" id="chat-search-close" title="Close">&times;</button>
+        <button class="icon-btn" id="chat-search-close" title="Close" aria-label="Close search">&times;</button>
     </div>
 
     <!-- Active file breadcrumb -->
@@ -93,7 +93,7 @@ export function getWebviewHtml(
 
     <!-- System prompt editor -->
     <div id="sys-prompt-area">
-        <textarea id="sys-prompt-input" placeholder="Custom system prompt for this session..."></textarea>
+        <textarea id="sys-prompt-input" placeholder="Custom system prompt for this session..." aria-label="System prompt"></textarea>
         <button id="sys-prompt-save">Save Prompt</button>
     </div>
 
@@ -109,7 +109,7 @@ export function getWebviewHtml(
     </div>
 
     <!-- Messages -->
-    <div id="chat-messages">
+    <div id="chat-messages" role="log" aria-label="Chat messages" aria-live="polite">
         <div class="welcome" id="welcome">
             <div class="welcome-icon"><img src="${logoUri}" alt="M"></div>
             <h2>+Lars AI Chat</h2>
@@ -135,8 +135,8 @@ export function getWebviewHtml(
         <div id="follow-ups"></div>
         <div id="scroll-anchor"><button id="scroll-bottom-btn" title="Scroll to bottom">&#8595;</button></div>
     </div>
-    <button id="scroll-top-btn" title="Scroll to top">&#8593;</button>
-    <button id="scroll-lock-btn" title="Resume auto-scroll">&#8595;</button>
+    <button id="scroll-top-btn" title="Scroll to top" aria-label="Scroll to top">&#8593;</button>
+    <button id="scroll-lock-btn" title="Resume auto-scroll" aria-label="Resume auto-scroll">&#8595;</button>
 
     <!-- Image paste indicator (#20) -->
     <div class="image-paste-indicator" id="image-paste-indicator">&#128247; Image pasted — will be described as context</div>
@@ -206,7 +206,7 @@ export function getWebviewHtml(
         <div id="input-box" style="position:relative;">
             <div id="recent-files-dropdown"></div>
             <div id="slash-hint"></div>
-            <textarea id="message-input" rows="1" placeholder="Ask Mercury anything..." autofocus></textarea>
+            <textarea id="message-input" rows="1" placeholder="Ask Mercury anything..." autofocus aria-label="Chat message input"></textarea>
             <div id="input-controls">
                 <select id="input-mode-select" title="Mode" aria-label="Mode selector">
                     <option value="ask">Ask</option>
@@ -222,8 +222,8 @@ export function getWebviewHtml(
                 <span class="at-file-hint" id="at-file-hint" title="Click to browse recent files">@file</span>
                 <span id="char-count"></span>
                 <span id="input-spacer"></span>
-                <button id="send-btn">Send</button>
-                <button id="stop-btn">Stop</button>
+                <button id="send-btn" aria-label="Send message">Send</button>
+                <button id="stop-btn" aria-label="Stop generation">Stop</button>
             </div>
         </div>
     </div>
@@ -237,10 +237,10 @@ export function getWebviewHtml(
         <button class="icon-btn" id="new-chat-sidebar" title="New Chat">+</button>
     </div>
     <div id="session-search">
-        <input id="session-search-input" type="text" placeholder="Search sessions..." />
+        <input id="session-search-input" type="text" placeholder="Search sessions..." aria-label="Search sessions" />
     </div>
     <div id="session-list"></div>
-    <button id="clear-all-sessions" title="Delete all sessions">Clear All</button>
+    <button id="clear-all-sessions" title="Delete all sessions" aria-label="Delete all sessions">Clear All</button>
 </div>
 
 <script nonce="${nonce}" src="${jsUri}"></script>

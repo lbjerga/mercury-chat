@@ -2,7 +2,7 @@
   "name": "mercury-chat",
   "displayName": "+Lars - AI Chat Tool (Mercury 2)",
   "description": "Full-featured AI coding assistant powered by Inception Mercury 2 — standalone sidebar with tools, sessions, streaming + Copilot Chat (@mercury). 10 built-in tools, agentic Rapid Code pipeline, token budget guardrails, live cost tracking.",
-  "version": "0.24.0",
+  "version": "0.25.0",
   "publisher": "lars-bjerga",
   "license": "MIT",
   "icon": "public/pluslarslogo2025white.png",
@@ -431,143 +431,190 @@
           "maximum": 600000,
           "description": "Streaming timeout for Ollama requests (ms). Local models may be slow on first load.",
           "order": 33
+        },
+        "mercuryChat.logLevel": {
+          "type": "string",
+          "default": "info",
+          "enum": ["debug", "info", "warn", "error", "silent"],
+          "enumDescriptions": [
+            "Debug — verbose output for troubleshooting",
+            "Info — normal output (default)",
+            "Warn — only warnings and errors",
+            "Error — only errors",
+            "Silent — no output"
+          ],
+          "description": "Minimum log level for the Mercury Chat output channel.",
+          "order": 34
         }
       }
     },
     "commands": [
       {
         "command": "mercuryChat.setApiKey",
-        "title": "Mercury Chat: Set API Key"
+        "title": "Set API Key",
+        "category": "Mercury Chat"
       },
       {
         "command": "mercuryChat.clearHistory",
-        "title": "Mercury Chat: Clear Conversation History"
+        "title": "Clear Conversation History",
+        "category": "Mercury Chat"
       },
       {
         "command": "mercuryChat.newChat",
-        "title": "Mercury Chat: New Chat",
+        "title": "New Chat",
+        "category": "Mercury Chat",
         "icon": "$(add)"
       },
       {
         "command": "mercuryChat.sendSelection",
-        "title": "Mercury Chat: Send Selection to Chat"
+        "title": "Send Selection to Chat",
+        "category": "Mercury Chat"
       },
       {
         "command": "mercuryChat.exportChat",
-        "title": "Mercury Chat: Export Conversation",
+        "title": "Export Conversation",
+        "category": "Mercury Chat",
         "icon": "$(export)"
       },
       {
         "command": "mercuryChat.toggleSidebar",
-        "title": "Mercury Chat: Toggle Sessions Panel"
+        "title": "Toggle Sessions Panel",
+        "category": "Mercury Chat"
       },
       {
         "command": "mercuryChat.explainSelection",
-        "title": "Mercury: Explain This"
+        "title": "Explain This",
+        "category": "Mercury"
       },
       {
         "command": "mercuryChat.fixSelection",
-        "title": "Mercury: Fix This"
+        "title": "Fix This",
+        "category": "Mercury"
       },
       {
         "command": "mercuryChat.testSelection",
-        "title": "Mercury: Generate Tests"
+        "title": "Generate Tests",
+        "category": "Mercury"
       },
       {
         "command": "mercuryChat.docSelection",
-        "title": "Mercury: Generate Docs"
+        "title": "Generate Docs",
+        "category": "Mercury"
       },
       {
         "command": "mercuryChat.generateCommitMessage",
-        "title": "Mercury Chat: Generate Commit Message"
+        "title": "Generate Commit Message",
+        "category": "Mercury Chat"
       },
       {
         "command": "mercuryChat.clearAllSessions",
-        "title": "Mercury Chat: Clear All Sessions"
+        "title": "Clear All Sessions",
+        "category": "Mercury Chat"
       },
       {
         "command": "mercuryChat.undoLastMessage",
-        "title": "Mercury Chat: Undo Last Message"
+        "title": "Undo Last Message",
+        "category": "Mercury Chat"
       },
       {
         "command": "mercuryChat.duplicateSession",
-        "title": "Mercury Chat: Duplicate Current Session"
+        "title": "Duplicate Current Session",
+        "category": "Mercury Chat"
       },
       {
         "command": "mercuryChat.toggleCompact",
-        "title": "Mercury Chat: Toggle Compact Mode"
+        "title": "Toggle Compact Mode",
+        "category": "Mercury Chat"
       },
       {
         "command": "mercuryChat.showShortcuts",
-        "title": "Mercury Chat: Show Keyboard Shortcuts"
+        "title": "Show Keyboard Shortcuts",
+        "category": "Mercury Chat"
       },
       {
         "command": "mercuryChat.searchInChat",
-        "title": "Mercury Chat: Search in Conversation"
+        "title": "Search in Conversation",
+        "category": "Mercury Chat"
       },
       {
         "command": "mercuryChat.inlinePrompt",
-        "title": "Mercury: Inline Prompt at Cursor"
+        "title": "Inline Prompt at Cursor",
+        "category": "Mercury"
       },
       {
         "command": "mercuryChat.sendTerminalOutput",
-        "title": "Mercury Chat: Send Terminal Output to Chat"
+        "title": "Send Terminal Output to Chat",
+        "category": "Mercury Chat"
       },
       {
         "command": "mercuryChat.fixDiagnostic",
-        "title": "Mercury: Fix This Problem"
+        "title": "Fix This Problem",
+        "category": "Mercury"
       },
       {
         "command": "mercuryChat.codeLensExplain",
-        "title": "Mercury: Explain Function"
+        "title": "Explain Function",
+        "category": "Mercury"
       },
       {
         "command": "mercuryChat.codeLensTest",
-        "title": "Mercury: Generate Tests for Function"
+        "title": "Generate Tests for Function",
+        "category": "Mercury"
       },
       {
         "command": "mercuryChat.codeLensFix",
-        "title": "Mercury: Fix Function"
+        "title": "Fix Function",
+        "category": "Mercury"
       },
       {
         "command": "mercuryChat.showOutputChannel",
-        "title": "Mercury Chat: Show Output Channel"
+        "title": "Show Output Channel",
+        "category": "Mercury Chat"
       },
       {
         "command": "mercuryChat.cycleReasoningEffort",
-        "title": "Mercury Chat: Cycle Reasoning Effort"
+        "title": "Cycle Reasoning Effort",
+        "category": "Mercury Chat"
       },
       {
         "command": "mercuryChat.showTokenUsage",
-        "title": "Mercury Chat: Show Token Usage & Cost"
+        "title": "Show Token Usage & Cost",
+        "category": "Mercury Chat"
       },
       {
         "command": "mercuryChat.resetTokenStats",
-        "title": "Mercury Chat: Reset Token Stats"
+        "title": "Reset Token Stats",
+        "category": "Mercury Chat"
       },
       {
         "command": "mercuryChat.showProviderHealth",
-        "title": "Mercury Chat: Show Provider Health"
+        "title": "Show Provider Health",
+        "category": "Mercury Chat"
       },
       {
         "command": "mercuryChat.switchProvider",
-        "title": "Mercury Chat: Switch Provider"
+        "title": "Switch Provider",
+        "category": "Mercury Chat"
       },
       {
         "command": "mercuryChat.stopGeneration",
-        "title": "Mercury Chat: Stop Generation"
+        "title": "Stop Generation",
+        "category": "Mercury Chat"
       },
       {
         "command": "mercuryChat.regenerate",
-        "title": "Mercury Chat: Regenerate Last Response"
+        "title": "Regenerate Last Response",
+        "category": "Mercury Chat"
       },
       {
         "command": "mercuryChat.viewLearnings",
-        "title": "Mercury Chat: View Learnings"
+        "title": "View Learnings",
+        "category": "Mercury Chat"
       },
       {
         "command": "mercuryChat.clearLearnings",
-        "title": "Mercury Chat: Clear Learnings"
+        "title": "Clear Learnings",
+        "category": "Mercury Chat"
       }
     ],
     "keybindings": [
@@ -649,12 +696,17 @@
     "compile": "tsc -p ./",
     "watch": "tsc -watch -p ./",
     "lint": "eslint src --ext ts",
+    "lint:fix": "eslint src --ext ts --fix",
+    "format": "prettier --write \"src/**/*.ts\"",
+    "format:check": "prettier --check \"src/**/*.ts\"",
+    "typecheck": "tsc --noEmit",
     "bundle": "node esbuild.js",
     "bundle:watch": "node esbuild.js --watch",
     "bundle:prod": "node esbuild.js --production",
     "package": "npm run bundle:prod && vsce package",
     "test": "vitest run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "precommit": "npm run typecheck && npm run lint && npm run test"
   },
   "devDependencies": {
     "@types/node": "^20.11.0",
@@ -663,6 +715,8 @@
     "@typescript-eslint/parser": "^8.56.1",
     "esbuild": "^0.27.3",
     "eslint": "^8.57.1",
+    "eslint-config-prettier": "^10.0.0",
+    "prettier": "^3.4.0",
     "typescript": "^5.3.0",
     "vitest": "^4.0.18"
   }

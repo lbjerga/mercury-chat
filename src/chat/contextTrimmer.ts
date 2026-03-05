@@ -1,14 +1,46 @@
 /**
  * contextTrimmer.ts — Token estimation, message trimming, dropped-message summarization
  * Extracted from chatViewProvider.ts
+ *
+ * Improvement #7: estimateTokens results are memoized via a small LRU cache
+ * keyed by string hash, so repeated estimation on the same content (common
+ * when the conversation hasn't changed) avoids redundant work.
  */
 
 import { MercuryMessage, MercuryToolCallMessage } from '../mercuryClient';
 import { ProviderRouter } from '../providers';
 
-/** Rough estimate: ~4 chars per token for English/code */
+// ── Token estimation cache (#7) ──
+const TOKEN_CACHE_MAX = 256;
+const _tokenCache = new Map<number, number>();
+
+/** djb2 hash — cheap, collision-tolerant for cache purposes */
+function _hash(s: string): number {
+    let h = 5381;
+    for (let i = 0, len = s.length; i < len; i++) {
+        h = ((h << 5) + h + s.charCodeAt(i)) | 0;
+    }
+    return h;
+}
+
+/** Rough estimate: ~4 chars per token for English/code (memoized) */
 export function estimateTokens(text: string): number {
-    return Math.ceil(text.length / 4);
+    const h = _hash(text);
+    const cached = _tokenCache.get(h);
+    if (cached !== undefined) { return cached; }
+    const tokens = Math.ceil(text.length / 4);
+    if (_tokenCache.size >= TOKEN_CACHE_MAX) {
+        // evict oldest
+        const first = _tokenCache.keys().next().value;
+        if (first !== undefined) { _tokenCache.delete(first); }
+    }
+    _tokenCache.set(h, tokens);
+    return tokens;
+}
+
+/** Clear the token estimation cache (for tests) */
+export function clearTokenCache(): void {
+    _tokenCache.clear();
 }
 
 export async function trimMessagesToTokenLimit(
