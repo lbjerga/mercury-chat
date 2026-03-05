@@ -226,12 +226,13 @@ export class ProviderRouter {
                 errors.push(`${PROVIDER_LABELS[id]}: ${errMsg}`);
                 logInfo(`[Router] ${PROVIDER_LABELS[id]} failed (${kind}): ${errMsg}`);
 
+                // Always try the next provider — an auth/unsupported error on
+                // provider A says nothing about provider B. Only bump the
+                // circuit breaker for transient errors (rate-limit, timeout, etc.).
                 if (isRetryableError(kind)) {
                     this._recordFailure(id);
-                    continue; // try next provider
                 }
-                // Non-retryable: don't try others (auth issue, unsupported, etc.)
-                throw err;
+                continue;
             }
         }
 
@@ -293,9 +294,8 @@ export class ProviderRouter {
 
                 if (isRetryableError(kind)) {
                     this._recordFailure(id);
-                    continue;
                 }
-                throw err;
+                continue;
             }
         }
 
@@ -324,9 +324,8 @@ export class ProviderRouter {
                 const kind = classifyError(err);
                 if (isRetryableError(kind)) {
                     this._recordFailure(id);
-                    continue;
                 }
-                throw err;
+                continue;
             }
         }
 
