@@ -399,6 +399,8 @@ class TokenTracker {
         this.sessionStart = Date.now();
         this._cachedStats = undefined;
         this._statsDirty = true;
+        this._calibrationFactor = 1.0;
+        this._calibrationSamples = 0;
     }
 
     // ── Budget guardrail (#2) ──

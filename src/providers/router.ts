@@ -9,11 +9,11 @@
  *  2. Skip providers that are not available (missing API key, etc.).
  *  3. If the request requires tool calling, skip providers without that capability.
  *  4. Try the first eligible provider.
- *  5. On retryable failure (rate-limit, timeout, 5xx, network) → trip breaker, try next.
- *  6. On non-retryable failure (auth, unsupported) → return error immediately.
+ *  5. On ANY failure → log it, try next provider.
+ *  6. Only transient errors (rate-limit, timeout, 5xx, network) trip the circuit breaker.
  *
  * Circuit breaker logic:
- *  - After `maxFailures` consecutive failures → OPEN (provider disabled).
+ *  - After `maxFailures` consecutive transient failures → OPEN (provider disabled).
  *  - After `cooldownMs` → HALF-OPEN (one probe request; success → CLOSED).
  */
 

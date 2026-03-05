@@ -55,6 +55,7 @@ const HIGH_PATTERNS = [
     /\b(architect|design|system design|redesign)\b/i,
     /\b(refactor|restructure|rewrite|migrate|overhaul)\b/i,
     /\b(implement|build|create) (a |an )?(full|complete|entire|whole)\b/i,
+    /\b(implement|build|create) .{5,}/i,                 // standalone implement/build/create with a target
     /\b(debug|investigate|figure out|root cause|why (is|does|doesn't|isn't))\b/i,
     /\b(review|audit|analyze|security|vulnerability|performance)\b/i,
     /\b(complex|complicated|tricky|challenging|edge case)\b/i,
@@ -98,10 +99,12 @@ export function autoDetectEffort(signals: ComplexitySignals): { effort: Reasonin
         }
     }
 
-    // 2. Instant patterns (greetings, trivial questions)
-    for (const pat of INSTANT_PATTERNS) {
-        if (pat.test(prompt)) {
-            return { effort: 'instant', reason: 'trivial/greeting pattern' };
+    // 2. Instant patterns (greetings, trivial questions) — only for short prompts
+    if (prompt.length < 80) {
+        for (const pat of INSTANT_PATTERNS) {
+            if (pat.test(prompt)) {
+                return { effort: 'instant', reason: 'trivial/greeting pattern' };
+            }
         }
     }
 
