@@ -2,7 +2,7 @@
   "name": "mercury-chat",
   "displayName": "+Lars - AI Chat Tool (Mercury 2)",
   "description": "Full-featured AI coding assistant powered by Inception Mercury 2 — standalone sidebar with tools, sessions, streaming + Copilot Chat (@mercury). 10 built-in tools, agentic Rapid Code pipeline, token budget guardrails, live cost tracking.",
-  "version": "0.23.0",
+  "version": "0.24.0",
   "publisher": "lars-bjerga",
   "license": "MIT",
   "icon": "public/pluslarslogo2025white.png",

@@ -4,6 +4,37 @@ All notable changes to the **+Lars AI Chat Tool** extension will be documented i
 
 ---
 
+## [0.24.0] — 2026-03-05
+
+### Testing & Reliability Release
+
+Comprehensive test suite (38 → 191 tests), three critical provider-routing bug fixes, and improvements discovered during testing.
+
+#### Critical Bug Fixes
+- **Router always-try-all-providers** — Auth (403) and unsupported errors on one provider no longer block fallback to the next provider. Previously, a Copilot "no model available" error would throw immediately instead of trying OpenRouter/Ollama/Mercury.
+- **Provider gate removed** — `chatEngine.ts` and `chatHandler.ts` no longer hard-gate on `mercuryChat.apiKey`. Any configured provider (Copilot, OpenRouter, Ollama, or Mercury) now works independently. Before this fix, the extension was completely non-functional without a Mercury API key.
+- **Model name corrected** — `mercury-coder` → `mercury-2`. The invalid model name was returning 403 from the Inception API.
+
+#### Test Suite — 7 New Test Files (38 → 191 tests)
+- **router.test.ts** (31 tests) — Fallback chain, circuit breaker open/close/half-open, auth fallthrough fix, tool-call fallback without tools, serialization round-trip, `selectProvider` filters, `getStatus` output
+- **autoReasoning.test.ts** (32 tests) — Instant/low/high pattern matching, command baselines, score-based classification, command floor override, throttle detection, token estimation
+- **tokenTracker.test.ts** (32 tests) — Token estimation, request recording, calibration EMA, session stats aggregation, budget guardrails, cost calculation, formatting, `toJSON`/`fromJSON` persistence
+- **modelSelector.test.ts** (23 tests) — Tier classification (light/medium/heavy), keyword matching, context-token thresholds, model selection mapping
+- **learnings.test.ts** (18 tests) — Error pattern CRUD, duplicate handling, `findFix` matching, time-based decay, positive feedback, summary formatting, `clearAll`
+- **contextTrimmer.test.ts** (10 tests) — Token estimation, message trimming from oldest, tool output whitespace compression, long output truncation, summary placeholder for dropped messages
+- **followUps.test.ts** (7 tests) — Mode-specific suggestions (code/plan/chat), diagnostics boost, 4-item cap
+
+#### Improvements Found During Testing
+- **autoReasoning: instant-pattern guard** — Instant patterns (greetings, trivial questions) now only fire for prompts < 80 chars, preventing false-positive instant classification on long complex prompts
+- **autoReasoning: standalone implement/build/create** — Added `HIGH_PATTERN` for `implement/build/create` followed by any target (previously only matched with full/complete/entire qualifier)
+- **tokenTracker: calibration reset** — `resetSession()` now resets calibration factor and sample count, preventing stale EMA from leaking between sessions
+- **Router header comment** — Updated to reflect the always-try-all-providers behavior
+
+#### Housekeeping
+- `.mercury-learnings.json` added to both `.gitignore` and `.vscodeignore` to prevent workspace learning data from leaking into git or the VSIX package
+
+---
+
 ## [0.23.0] — 2026-03-05
 
 ### Caching & Prompt Prefix Optimization Release
