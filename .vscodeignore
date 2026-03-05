@@ -9,6 +9,7 @@ api.txt
 esbuild.js
 test-validate.js
 vitest.config.ts
+.mercury-learnings.json
 **/*.ts
 **/*.test.ts
 !src/webview/*.js

@@ -36,14 +36,25 @@ export async function handleUserMessage(ctx: ChatViewContext, text: string, mode
     const config = vscode.workspace.getConfiguration('mercuryChat');
     const apiKey = config.get<string>('apiKey', '');
 
-    if (!apiKey) {
+    // Check if ANY provider is available (not just Mercury)
+    const hasAnyProvider = ctx.router
+        ? !!ctx.router.selectProvider()
+        : !!apiKey;
+
+    if (!hasAnyProvider) {
         postMessage(ctx, {
             type: 'addMessage', role: 'assistant',
-            content: '\u26a0\ufe0f **No API key set.** Go to Settings \u2192 search `mercuryChat.apiKey` or run **Mercury Chat: Set API Key**.',
+            content: '\u26a0\ufe0f **No provider available.** Configure at least one provider in Settings:\n\n' +
+                '• **Copilot** — install GitHub Copilot extension and sign in\n' +
+                '• **OpenRouter** — set `mercuryChat.openRouterApiKey`\n' +
+                '• **Ollama** — run `ollama serve` locally\n' +
+                '• **Mercury** — set `mercuryChat.apiKey`\n\n' +
+                'Then adjust `mercuryChat.routeOrder` to set fallback priority.',
         });
         return;
     }
 
+    // Update Mercury client config (used as fallback even if key is empty)
     ctx.client.updateConfig({
         apiKey,
         baseUrl: config.get<string>('apiBaseUrl', 'https://api.inceptionlabs.ai/v1'),

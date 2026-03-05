@@ -5,3 +5,4 @@ out/
 api.txt
 .vscode/settings.json
 test-validate.js
+.mercury-learnings.json

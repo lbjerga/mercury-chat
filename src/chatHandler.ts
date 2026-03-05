@@ -38,12 +38,20 @@ export function createChatCommand(client: MercuryClient, router?: ProviderRouter
         const config = vscode.workspace.getConfiguration('mercuryChat');
         const apiKey = config.get<string>('apiKey', '');
 
-        if (!apiKey) {
+        // Check if ANY provider is available (not just Mercury)
+        const hasAnyProvider = router
+            ? !!router.selectProvider()
+            : !!apiKey;
+
+        if (!hasAnyProvider) {
             stream.markdown(
-                '⚠️ **No API key configured.**\n\n' +
-                'Please set your Mercury API key:\n' +
-                '1. Open **Settings** → search for `mercuryChat.apiKey`\n' +
-                '2. Or run the command: **Mercury Chat: Set API Key**\n'
+                '⚠️ **No provider available.**\n\n' +
+                'Configure at least one provider in Settings:\n' +
+                '- **Copilot** — install GitHub Copilot extension and sign in\n' +
+                '- **OpenRouter** — set `mercuryChat.openRouterApiKey`\n' +
+                '- **Ollama** — run `ollama serve` locally\n' +
+                '- **Mercury** — set `mercuryChat.apiKey`\n\n' +
+                'Then adjust `mercuryChat.routeOrder` to set fallback priority.\n'
             );
             return { metadata: { command: request.command || 'chat' } };
         }
